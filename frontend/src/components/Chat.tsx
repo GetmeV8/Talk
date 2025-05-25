@@ -6,6 +6,7 @@ export const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [username, setUsername] = useState('');
+  const [inputUsername, setInputUsername] = useState('');
   const { socket, isConnected, sendMessage } = useSocket();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -47,16 +48,32 @@ export const Chat: React.FC = () => {
     setNewMessage('');
   };
 
+  const handleJoinChat = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedUsername = inputUsername.trim();
+    if (trimmedUsername) {
+      setUsername(trimmedUsername);
+      // Send system message for user joining
+      const joinMessage: Message = {
+        type: 'system',
+        content: `${trimmedUsername} joined the chat`,
+        timestamp: Date.now(),
+        sender: 'system'
+      };
+      sendMessage(joinMessage);
+    }
+  };
+
   if (!username) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-lg shadow-md w-96">
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Enter your username</h2>
-          <form onSubmit={(e) => { e.preventDefault(); if (username.trim()) setUsername(username.trim()); }} className="space-y-4">
+          <form onSubmit={handleJoinChat} className="space-y-4">
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={inputUsername}
+              onChange={(e) => setInputUsername(e.target.value)}
               placeholder="Username"
               className="input w-full"
             />
@@ -86,22 +103,30 @@ export const Chat: React.FC = () => {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${message.sender === username ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.type === 'system' ? 'justify-center' : message.sender === username ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-[70%] rounded-lg p-3 ${
-                  message.sender === username
+                  message.type === 'system'
+                    ? 'bg-gray-100 text-gray-600 text-sm italic'
+                    : message.sender === username
                     ? 'bg-primary-600 text-white'
                     : 'bg-white text-gray-800'
                 }`}
               >
-                <div className="text-sm font-medium mb-1">
-                  {message.sender === username ? 'You' : message.sender}
-                </div>
-                <div>{message.content}</div>
-                <div className="text-xs mt-1 opacity-70">
-                  {new Date(message.timestamp || Date.now()).toLocaleTimeString()}
-                </div>
+                {message.type === 'system' ? (
+                  <div>{message.content}</div>
+                ) : (
+                  <>
+                    <div className="text-sm font-medium mb-1">
+                      {message.sender === username ? 'You' : message.sender}
+                    </div>
+                    <div>{message.content}</div>
+                    <div className="text-xs mt-1 opacity-70">
+                      {new Date(message.timestamp || Date.now()).toLocaleTimeString()}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ))}

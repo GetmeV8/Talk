@@ -31,7 +31,7 @@ type Client struct {
 	send chan []byte
 }
 
-// Message represents a chat message
+// Message represents a chat messagee
 type Message struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
