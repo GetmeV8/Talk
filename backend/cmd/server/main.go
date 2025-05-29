@@ -25,7 +25,7 @@ const (
 	maxMessageSize = 512
 )
 
-// Client represents a connected WebSocket client
+// Client represents a connected WebSocket clientt
 type Client struct {
 	conn *websocket.Conn
 	send chan []byte
