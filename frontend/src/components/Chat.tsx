@@ -53,7 +53,7 @@ export const Chat: React.FC = () => {
     const trimmedUsername = inputUsername.trim();
     if (trimmedUsername) {
       setUsername(trimmedUsername);
-      // Send system message for user joining
+      // Send system message for user joiningg
       const joinMessage: Message = {
         type: 'system',
         content: `${trimmedUsername} joined the chat`,
