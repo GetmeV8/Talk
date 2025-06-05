@@ -1,1 +1,1 @@
-A Mern Project builing meticulously without any lose ends
+A Mern Project builing meticulously without any lose ends.
